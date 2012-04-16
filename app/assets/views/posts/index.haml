@@ -1,0 +1,7 @@
+%h1 Post Index JS HAML View
+%ol
+  :each post in posts
+    %li
+      %h2= post.title
+      %section.body= post.body
+

@@ -1,0 +1,9 @@
+<% views_root = Rails.root.join('app/assets/views') %>
+
+Views = {};
+
+<% Dir[views_root+'**/*'].map(&method(:Pathname)).each do |view| %>
+  <% next unless view.file? %>
+  <% view_name = view.relative_path_from(views_root).to_s.scan(/(.+)\./).first.first %>
+  Views['<%= view_name %>'] = Haml(<%= view.read.inspect %>);
+<% end %>
