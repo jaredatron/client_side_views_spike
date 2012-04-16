@@ -1,7 +1,5 @@
 %h1 Post Index JS HAML View
-%ol
+%ol.posts{ style: 'background:green' }
   :each post in posts
-    %li
-      %h2= post.title
-      %section.body= post.body
+    %li.post= render('posts/index/post',{post:post})
 

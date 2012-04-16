@@ -1,9 +1,25 @@
 <% views_root = Rails.root.join('app/assets/views') %>
 
-Views = {};
+Views = {
+  store: {},
+  register: function(name, view){
+    return this.store[name] = view;
+  },
+  render: function(name, locals){
+    var view = this.store[name];
+    if (!view) throw "view not found: "+name;
+    locals.render = function(name, locals){
+      return Views.render(name, locals);
+    };
+    return view(locals);
+  }
+};
 
 <% Dir[views_root+'**/*'].map(&method(:Pathname)).each do |view| %>
   <% next unless view.file? %>
   <% view_name = view.relative_path_from(views_root).to_s.scan(/(.+)\./).first.first %>
-  Views['<%= view_name %>'] = Haml(<%= view.read.inspect %>);
+  // TODO: pre-render views using rubyracer one time on the server
+  Views.register(<%= view_name.inspect %>, Haml(<%= view.read.inspect %>));
 <% end %>
+
+
