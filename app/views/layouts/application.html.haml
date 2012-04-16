@@ -1,7 +1,7 @@
 !!!
 %html
   %head
-    %title ClientSideViewsExample
+    %title= @page_title
     = javascript_include_tag "application"
     :javascript
       console.log('application.js loaded');
@@ -9,6 +9,6 @@
         console.log('document ready');
       })
     = stylesheet_link_tag "application", :media => "all"
-  %body{style:'display:none; background:red'}
+  %body
     :javascript
       Page.render(#{@render_options.to_json});

@@ -7,8 +7,8 @@ class PostsController < ApplicationController
         @render_options = {
           :layout => 'application',
           :view   => "#{params[:controller]}/#{params[:action]}",
-          :title  => 'Post Index Payge',
         }
+        @page_title = 'Post Index Payge';
         render :text => 'posts index', :layout => true
       }
       format.json {

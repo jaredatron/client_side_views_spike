@@ -8,16 +8,13 @@ Page = {};
       method: 'GET',
       url: options.url,
       dataType: 'json',
-      // async: false,
+      async: false,
       success: function(data){
         console.log(data);
         options.content = Views.render(options.view, data);
-        var layout = Views.render('layouts/'+options.layout, options);
-        console.log(layout);
-        document.open();
-        document.write(layout);
-        document.close();
-        $(document).trigger('ready');
+        var html = Views.render('layouts/'+options.layout, options);
+        console.log(html);
+        $(document.body).html(html);
         console.log('page.render complete');
       }
     });
