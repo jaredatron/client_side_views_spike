@@ -3,6 +3,12 @@ class PostsController < ApplicationController
   def index
     respond_to do |format|
       format.html{
+        # these would be the defaults
+        @render_options = {
+          :layout => 'application',
+          :view   => "#{params[:controller]}/#{params[:action]}",
+          :title  => 'Post Index Payge',
+        }
         render :text => 'posts index', :layout => true
       }
       format.json {

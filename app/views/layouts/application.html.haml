@@ -1,10 +1,14 @@
 !!!
 %html
-%head
-  %title ClientSideViewsExample
-  = stylesheet_link_tag    "application", :media => "all"
-  = javascript_include_tag "application"
-  = csrf_meta_tags
-%body{style:'background:red'}
-  :javascript
-    Page.render('#{params[:controller]}/#{params[:action]}')
+  %head
+    %title ClientSideViewsExample
+    = javascript_include_tag "application"
+    :javascript
+      console.log('application.js loaded');
+      $(function(){
+        console.log('document ready');
+      })
+    = stylesheet_link_tag "application", :media => "all"
+  %body{style:'display:none; background:red'}
+    :javascript
+      Page.render(#{@render_options.to_json});

@@ -1,17 +1,24 @@
 Page = {};
 !function(){
 
-  Page.render = function(view){
-    url = location.pathname.replace(/(\.html)?$/,'.json') + location.search;
+  Page.render = function(options){
+    console.log('page.render called');
+    options.url || (options.url = location.pathname.replace(/(\.html)?$/,'.json') + location.search);
     $.ajax({
       method: 'GET',
-      url: url,
+      url: options.url,
       dataType: 'json',
-      async: false,
+      // async: false,
       success: function(data){
         console.log(data);
-        var html = Views.render(view, data);
-        $('body').html(html);
+        options.content = Views.render(options.view, data);
+        var layout = Views.render('layouts/'+options.layout, options);
+        console.log(layout);
+        document.open();
+        document.write(layout);
+        document.close();
+        $(document).trigger('ready');
+        console.log('page.render complete');
       }
     });
 
