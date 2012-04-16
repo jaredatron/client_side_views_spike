@@ -1,9 +1,9 @@
 Page = {};
 !function(){
 
-  Page.render = function(layout, page, url, options){
+  Page.render = function(layout, page, options){
     console.log('page.render called', page);
-    url || (url = location.pathname.replace(/(\.html)?$/,'.json') + location.search);
+    var url = location.pathname.replace(/(\.html)?$/,'.json') + location.search;
     options || (options = {});
     $.ajax({
       method: 'GET',
@@ -14,7 +14,6 @@ Page = {};
         console.log(data);
         options.content = Views.render('page', page, data);
         var html = Views.render('layout', layout, options);
-        console.log(html);
         $(document.body).html(html);
         console.log('page.render complete');
       }

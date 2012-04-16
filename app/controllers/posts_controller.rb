@@ -4,9 +4,9 @@ class PostsController < ApplicationController
     respond_to do |format|
       format.html{
         # these would be the defaults
-        @layout     = 'application'
-        @page       = "#{params[:controller]}/#{params[:action]}"
-        @page_title = 'Post Index Payge';
+        # @layout     = 'application'
+        # @page       = "#{params[:controller]}/#{params[:action]}"
+        @page_title = 'Posts'
         render :text => 'posts index', :layout => true
       }
       format.json {

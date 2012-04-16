@@ -13,5 +13,10 @@
 //= require haml
 //= require jquery
 //= require jquery_ujs
+//= require routes
+//= require views
+//= require page
 //= require_tree .
 
+console.log('application.js loaded');
+$(function(){ console.log('document ready'); });

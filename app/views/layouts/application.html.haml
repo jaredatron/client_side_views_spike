@@ -1,14 +1,10 @@
 !!!
 %html
   %head
-    %title= @page_title
+    %title= page_title
     = javascript_include_tag "application"
-    :javascript
-      console.log('application.js loaded');
-      $(function(){
-        console.log('document ready');
-      })
     = stylesheet_link_tag "application", :media => "all"
   %body
     :javascript
-      Page.render(#{@layout.inspect}, #{@page.inspect});
+      ENV = {};
+      Page.render(#{layout.to_json}, #{page.to_json}, #{render_options.to_json});
