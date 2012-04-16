@@ -1,23 +1,38 @@
 <% views_root = Rails.root.join('app/assets/views') %>
 
 Views = {
-  store: {},
-  register: function(name, view){
-    return this.store[name] = view;
+  layouts: {},
+  pages: {},
+  components: {},
+  type: function(type){
+    var store = this[type+'s'];
+    if (!store) throw new Error("view type not found: "+type);
+    return store;
   },
-  render: function(name, locals){
-    var view = this.store[name];
-    if (!view) throw "view not found: "+name;
-    locals.render = function(name, locals){
-      return Views.render(name, locals);
+  register: function(type, name, view){
+    return this.type(type)[name] = view;
+  },
+  render: function(type, name, locals){
+    var view = this.type(type)[name];
+    if (!view) throw new Error(type+" not found: "+name);
+    locals = locals ? Object.create(locals) : {};
+    console.log('rendering', name, locals);
+    locals.render = function(type, name, locals){
+      return Views.render(type, name, locals);
     };
     return view(locals);
   }
 };
 
+// Views.render({page:'posts/index', locals: {}})
+// Views.render('page', 'posts/index', {})
+
 <% Dir[views_root+'**/*'].map(&method(:Pathname)).each do |view| %>
   <% next unless view.file? %>
-  <% view_name = view.relative_path_from(views_root).to_s.scan(/(.+)\./).first.first %>
+  <% view_type, view_name = view.relative_path_from(views_root).to_s.scan(/(.+?)\/(.+)\./).first %>
+  <% view_type = view_type.singularize %>
   // TODO: pre-render views using rubyracer one time on the server
-  Views.register(<%= view_name.inspect %>, Haml(<%= view.read.inspect %>));
+  Views.register(<%= view_type.inspect %>, <%= view_name.inspect %>, Haml(<%= view.read.inspect %>));
 <% end %>
+
+

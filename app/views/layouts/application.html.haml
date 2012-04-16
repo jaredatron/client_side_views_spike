@@ -11,4 +11,4 @@
     = stylesheet_link_tag "application", :media => "all"
   %body
     :javascript
-      Page.render(#{@render_options.to_json});
+      Page.render(#{@layout.inspect}, #{@page.inspect});

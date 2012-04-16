@@ -4,10 +4,8 @@ class PostsController < ApplicationController
     respond_to do |format|
       format.html{
         # these would be the defaults
-        @render_options = {
-          :layout => 'application',
-          :view   => "#{params[:controller]}/#{params[:action]}",
-        }
+        @layout     = 'application'
+        @page       = "#{params[:controller]}/#{params[:action]}"
         @page_title = 'Post Index Payge';
         render :text => 'posts index', :layout => true
       }
