@@ -1,0 +1,7 @@
+@import "compass/reset"
+
+// import everything
+<% root = Pathname(File.expand_path('../',__FILE__)) %>
+<% Dir[root.join('{components,layouts,pages}/**/*')].each do |file| %>
+@import "<%= Pathname.new(file).relative_path_from(root) %>"
+<% end %>
