@@ -1,0 +1,10 @@
+%section.page-header
+  .left-nav
+    %a.home{href: root_path()}   Home
+    %a.posts{href: posts_path()} Posts
+  .right-nav
+    :if loggedIn()
+      Hello
+      = name
+    :else
+      %a.login{href: "#"} Login
