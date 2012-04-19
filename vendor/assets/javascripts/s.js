@@ -16,6 +16,7 @@
   S.prototype.toSelector = toSelector;
   S.prototype.toString   = toSelector;
   S.prototype.valueOf    = toSelector;
+  S.prototype.root       = root;
 
   function Selector(value, parent) {
     if (value === undefined) value = '';
@@ -54,6 +55,11 @@
     }).join(', ');
   }
 
+  function root(){
+    var root = this;
+    while(typeof root.end === 'function' && root.end !== root.end.end) root = root.end;
+    return root;
+  }
 
   // Helpers
 

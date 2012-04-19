@@ -2,12 +2,24 @@
 //https://github.com/deadlyicon/s.js
 !function(jQuery, DOCUMENT, undefined){
 
+  var SjQuery = jQuery.sub();
+
+  SjQuery.prototype.root = function(){
+    var selector = this.toSelector().root();
+    return toSjQuery(this.closest(selector), selector);
+  };
+
+  SjQuery.prototype.up = function(){
+    var selector = this.toSelector().end;
+    return toSjQuery(this.closest(selector), selector);
+  };
+
   jQuery.prototype.toSelector = function(){
     return S(this.selector);
   };
 
   S.prototype.get = function(){
-    return jQuery(this.toSelector());
+    return toSjQuery(this.toString(), this);
   };
 
   S.prototype.bind = function(types, data, fn){
@@ -15,7 +27,7 @@
 
     if (typeof data === 'function') fn = data; data = undefined;
 
-    fn.sjs_wrapper || wrapEventHandler(fn);
+    fn.sjs_wrapper || wrapEventHandler(fn, this);
 
     DOCUMENT.delegate(this, types, data, fn.sjs_wrapper);
     return this;
@@ -27,7 +39,7 @@
   };
 
   S.createEventMethods = function(){
-    $.each(arguments, function(i, event){
+    jQuery.each(arguments, function(i, event){
       S.prototype[event] = function(data, fn) { return this.bind(event, data, fn); };
     });
   };
@@ -38,7 +50,7 @@
     "mouseleave", "change", "select", "submit", "keydown", "keypress", "keyup", "error"
   );
 
-  $.each(["find", "filter", "closest", "delegate", "undelegate"], function(index, name){
+  jQuery.each(["find", "filter", "closest", "delegate", "undelegate"], function(index, name){
     var $super = jQuery.prototype[name];
     jQuery.prototype[name] = function(selector){
       if (typeof selector === 'function' && 'toSelector' in selector)
@@ -47,10 +59,17 @@
     };
   });
 
-  function wrapEventHandler(fn){
+  function toSjQuery(expression, selector){
+    var collection = SjQuery(expression);
+    collection.toSelector = function(){ return selector };
+    return collection;
+  }
+
+  function wrapEventHandler(fn, selector){
     fn.sjs_wrapper = function(){
+      var $this = toSjQuery(this, selector);
       arguments = Array.prototype.slice.apply(arguments);
-      arguments.unshift(jQuery(this));
+      arguments.unshift($this);
       fn.apply(this, arguments);
     };
     fn.sjs_wrapper.wraps = fn;

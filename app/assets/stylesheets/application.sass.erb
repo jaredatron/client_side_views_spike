@@ -6,3 +6,4 @@
 <% Dir[root.join('{components,layouts,pages}/**/*')].each do |file| %>
 @import "<%= Pathname.new(file).relative_path_from(root) %>"
 <% end %>
+

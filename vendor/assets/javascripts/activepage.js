@@ -44,12 +44,12 @@ ActivePage.Component = new Constructor({
       view_context.include(ActivePage.Helper(helper));
     });
     html = view_context.render_view('components/'+this.name, locals);
-    return '<div class="component '+this.name+'">'+html+'</div>';
+    return '<div class="'+this.name+'">'+html+'</div>';
   },
 
   redraw: function(){
     console.log('redrawing the '+this.name+' component');
-    $('.component.'+this.name).replaceWith(this.render());
+    $('.'+this.name).replaceWith(this.render());
     return this;
   }
 

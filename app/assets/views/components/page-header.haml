@@ -1,8 +1,5 @@
 .left-nav
-  %a.home{href: root_path()}   Home
-  %a.posts{href: posts_path()} Posts
+  %a{href: root_path()}  Home
+  %a{href: posts_path()} Posts
 .right-nav
-  :if loggedIn()
-    %a.logout{href: "#"} Logout
-  :if !loggedIn()
-    %a.login{href: "#"} Login
+  hello #{"there"}
