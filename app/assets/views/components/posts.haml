@@ -1,5 +1,5 @@
 %ol
-  :each post in posts
+  :each post in state('posts')
     %li.post
       .title= post.title
       .body= post.body

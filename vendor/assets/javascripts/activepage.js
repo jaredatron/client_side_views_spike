@@ -2,27 +2,18 @@ ActivePage = {};
 
 ActivePage.state = new ActiveData();
 
-ActivePage.render = function(){
-  console.log('page.render called', page);
-
+ActivePage.render = function(layout, page){
   var
-    layout = ActivePage.state.get('layout'),
-    page   = ActivePage.state.get('page'),
-    url    = location.pathname.replace(/(\.html)?$/,'.json') + location.search;
+    view_context = new ActivePage.ViewContext,
+    page_content = view_context.render_page(page),
+    html         = view_context.render_layout(layout, {content: page_content});
+  $(document.body).html(html);
+}
 
-  $.ajax({
-    method: 'GET',
-    url: url,
-    dataType: 'json',
-    async: false,
-    success: function(data){
-      var view_context = new ActivePage.ViewContext;
-      var html = view_context.render_layout(layout, {
-        content: view_context.render_page(page, data)
-      });
-      $(document.body).html(html);
-      console.log('page.render complete');
-    }
+ActivePage.reload = function(){
+  var url = location.pathname.replace(/(\.html)?$/,'.json') + location.search;
+  $.getJSON(url, function(page_state){
+    ActivePage.state.set(page_state);
   });
 }
 

@@ -7,4 +7,4 @@
   %body
     :javascript
       ActivePage.state.set(#{page_state.to_json});
-      ActivePage.render();
+      ActivePage.render(#{page_layout.to_json}, #{page_name.to_json});

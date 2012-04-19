@@ -19,7 +19,7 @@ $.extend(ActiveData.prototype, {
       for (var p in key) this.set(p, key[p]);
     }else{
       old_value = this.data[key]
-      if (old_value !== value){
+      if (typeof old_value === 'object' || old_value !== value){
         this.data[key] = value;
         // TODO possibly delay triggering until the next thread
         // to make batching automatic
