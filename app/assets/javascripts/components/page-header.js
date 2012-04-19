@@ -1,6 +1,6 @@
 ActivePage.Component('page-header', function(c){
 
-  c.helpers = ['routes', 'authentication'];
+  c.helpers('authentication');
 
   ActivePage.state.change('logged_in', function(){
     c.redraw();
@@ -14,17 +14,13 @@ ActivePage.Component('page-header', function(c){
     .end
     ('form.login')
       .bind('submit-succes', function(form, event){
-        c.redraw();
+        ActivePage.state.set('logged_in', true);
       })
     .end
     ('a.logout')
       .click(function(link, event){
-        $.ajax({
-          url: '/session',
-          method: 'delete',
-          success: function(){
-            c.redraw();
-          }
+        $.post('/logout', function(){
+          ActivePage.state.set('logged_in', false);
         });
       })
     .end

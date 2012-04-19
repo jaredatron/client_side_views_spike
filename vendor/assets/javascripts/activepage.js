@@ -26,38 +26,59 @@ ActivePage.render = function(){
   });
 }
 
-ActivePage.Component = function(name, block){
-  if (this instanceof ActivePage.Component); else return new ActivePage.Component(name, block);
-  if (typeof name !== 'string') throw new Error('name must be a string');
-  var component = ActivePage.components[name];
-  if (!component){
-    component = ActivePage.components[name] = this;
-    component.name = name;
+ActivePage.Component = new Constructor({
+
+  initialize: function(name, block){
+    if (this instanceof ActivePage.Component); else return new ActivePage.Component(name, block);
+    if (typeof name !== 'string') throw new Error('name must be a string');
+    var component = ActivePage.components[name];
+    if (!component){
+      component = ActivePage.components[name] = this;
+      component.name = name;
+      component._helpers = [];
+    }
+    if (block) block.call(component, component);
+    return component;
+  },
+
+  helpers: function(){
+    if (arguments.length > 0) [].push.apply(this._helpers, arguments);
+    return this._helpers;
+  },
+
+  render: function(locals){
+    var view_context, html;
+    view_context = new ActivePage.ViewContext;
+    this.helpers().forEach(function(helper){
+      view_context.include(ActivePage.Helper(helper));
+    });
+    html = view_context.render_view('components/'+this.name, locals);
+    return '<div class="component '+this.name+'">'+html+'</div>';
+  },
+
+  redraw: function(){
+    console.log('redrawing the '+this.name+' component');
+    $('.component.'+this.name).replaceWith(this.render());
+    return this;
   }
-  if (block) block.call(component, component);
-  return component;
-}
+
+});
 
 ActivePage.components = {};
 
-$.extend(ActivePage.Component.prototype, {
-  view: function(locals){
-    return '<strong>the '+this.name+' component has no view</strong>';
-  },
-  render: function(locals){
-    var view_context = new ActivePage.ViewContext;
-    // view_context.include(helpers);
-    return view_context.render_view('components/'+this.name, locals);
-  },
-  redraw: function(){
-    console.log('redrawing', this);
-  }
-});
-
-
 ActivePage.Helper = function(name, value){
   // TODO make this extend instead of overwrite
-  ActivePage.helpers[name] = value;
+  if (arguments.length === 0){
+    throw new Error('name required');
+  }
+  if (arguments.length === 1){
+    value = ActivePage.helpers[name];
+    if (!value) throw new Error('unknown helper '+name);
+  }
+  if (arguments.length === 2){
+    ActivePage.helpers[name] = value;
+  }
+  return value;
 };
 
 ActivePage.helpers = {};
@@ -112,45 +133,8 @@ ActivePage.ViewContext.include = function(mixin){
   return this;
 };
 
-
-//   data: {}
-// };
-
-// ActivePage.State.Namespace = new Constructor({
-//   initialize: function(name){
-//     this.name = name;
-//   },
-
-//   set: function(key, value){
-//     return store[this.namespace+':'+key] = value;
-//   },
-
-//   get: function(key){
-//     return store[this.namespace+':'+key];
-//   },
-
-//   on: function(events, keys, callback){
-
-//   },
-// });
-
-
-// ActivePage.State.set('logged_in', true);
-// ActivePage.State.get('logged_in'); //-> true
-
-// ActivePage.State.change('logged_in', function(logged_in){
-//   alert('you are '+(logged_in ? 'now' : 'no longer')+' logged in');
-// }); //-> true
-
-// ActivePage.State.set('logged_in', true); //-> alerts "you are no longer logged in"
-// ActivePage.State.set('logged_in', false); //-> alerts "you are now logged in"
-
-
-// ActivePage.State.Namespace.prototype.set
-//   store: {},
-
-//   namespace: '',
-
-
-
-// };
+ActivePage.ViewContext.include({
+  state: function(key){
+    return ActivePage.state.get(key);
+  }
+});
