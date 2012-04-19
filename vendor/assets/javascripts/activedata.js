@@ -14,11 +14,17 @@ $.extend(ActiveData.prototype, {
   },
 
   set: function(key, value){
+    var p, old_value;
     if (arguments.length === 1){
-      for (p in key) this.set(p, key[p]);
+      for (var p in key) this.set(p, key[p]);
     }else{
-      this.data[key] = value;
-      $(this).trigger(key, value);
+      old_value = this.data[key]
+      if (old_value !== value){
+        this.data[key] = value;
+        // TODO possibly delay triggering until the next thread
+        // to make batching automatic
+        $(this).trigger(key, value);
+      }
     }
     return this;
   },

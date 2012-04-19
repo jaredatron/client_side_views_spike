@@ -34,4 +34,4 @@ ActivePage.Component('page-header', function(c){
 
 
 // this would re-draw all page-header components on the page
-ActivePage.Component('page-header').redraw();
+// ActivePage.Component('page-header').redraw();

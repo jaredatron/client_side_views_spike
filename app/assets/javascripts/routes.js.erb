@@ -4,3 +4,6 @@ Routes.root_path = function(){ return '/'; };
 Routes.root_url = function(){ return location.origin+this.root_path(); };
 Routes.posts_path = function(){ return '/posts'; };
 Routes.posts_url = function(){ return location.origin+this.posts_path(); };
+
+
+ActivePage.ViewContext.include(Routes);

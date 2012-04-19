@@ -1,43 +1,43 @@
-Views = {};
-!function(){
+// Views = {};
+// !function(){
 
-  Views.locals = {};
-  Views.include = function(object){
-    extend(this.locals, object);
-  };
+//   Views.locals = {};
+//   Views.include = function(object){
+//     extend(this.locals, object);
+//   };
 
-  Views.layouts = {};
-  Views.pages = {};
-  Views.components = {};
+//   Views.layouts = {};
+//   Views.pages = {};
+//   Views.components = {};
 
-  Views.type = function(type){
-    var store = this[type+'s'];
-    if (!store) throw new Error("view type not found: "+type);
-    return store;
-  };
+//   Views.type = function(type){
+//     var store = this[type+'s'];
+//     if (!store) throw new Error("view type not found: "+type);
+//     return store;
+//   };
 
-  Views.register = function(type, name, view){
-    return this.type(type)[name] = view;
-  };
+//   Views.register = function(type, name, view){
+//     return this.type(type)[name] = view;
+//   };
 
-  Views.render = function(type, name, locals){
-    var view = this.type(type)[name];
-    if (!view) throw new Error(type+" not found: "+name);
-    locals = extend(Object.create(this.locals), locals || {});
-    locals.render = function(type, name, locals){
-      return Views.render(type, name, locals);
-    };
-    return view(locals);
-  };
+//   Views.render = function(type, name, locals){
+//     var view = this.type(type)[name];
+//     if (!view) throw new Error(type+" not found: "+name);
+//     locals = extend(Object.create(this.locals), locals || {});
+//     locals.render = function(type, name, locals){
+//       return Views.render(type, name, locals);
+//     };
+//     return view(locals);
+//   };
 
-  function extend(to, from){
-    for (p in from) to[p] = from[p];
-    return to;
-  }
+//   function extend(to, from){
+//     for (p in from) to[p] = from[p];
+//     return to;
+//   }
 
-}();
+// }();
 
-Views.include(Routes);
+// Views.include(Routes);
 
 // Views.render({page:'posts/index', locals: {}})
 // Views.render('page', 'posts/index', {})
@@ -53,29 +53,10 @@ Views.include(Routes);
 <% Dir[views_root+'**/*'].map(&method(:Pathname)).each do |view| %>
   <%
     next unless view.file?
-    view_type, view_name, extensions = view.relative_path_from(views_root).to_s.scan(/^(.+?)\/(.+?)\.(.+)$/).first
-    view_type = view_type.singularize
+    view_name, extensions = view.relative_path_from(views_root).to_s.scan(/^(.+?)\.(.+)$/).first
     value = view.read
-    # extensions = extensions.split('.')
-    # extensions.reverse.each{|ext|
-    #   value = case ext.to_sym
-    #   when :erb
-    #     ERB.new(value).result(view_binding)
-    #   else
-    #     value
-    #   end
-    #   nil
-    # }
     # TODO: pre-render views using rubyracer one time on the server
   %>
-  // <%= [view_type, view_name, extensions].inspect %>
-  // <%= value.inspect %>
-  Views.register(<%= view_type.to_json %>, <%= view_name.to_json %>, Haml(<%= value.to_json %>));
+  ActivePage.Views.register(<%= view_name.to_json %>, Haml(<%= value.to_json %>));
 <% end %>
-
-
-
-
-
-
 

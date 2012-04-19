@@ -17,9 +17,18 @@ ActivePage.render = function(){
     async: false,
     success: function(data){
       console.log(data);
-      var html = Views.render('layout', layout, {
-        content: content = Views.render('page', page, data)
+
+      // ActivePage.Layout()
+
+      var view_context = new ActivePage.ViewContext;
+
+      var html = view_context.render_layout(layout, {
+        content: view_context.render_page(page, data)
       });
+
+      // var html = ActivePage.Views.render('layouts/'+layout, {
+      //   content: content = ActivePage.Views.render('pages/'+page, data)
+      // });
       $(document.body).html(html);
       console.log('page.render complete');
     }
@@ -59,6 +68,58 @@ ActivePage.Helper = function(name, value){
 };
 
 ActivePage.helpers = {};
+
+
+
+ActivePage.Views = {
+  templates: {},
+  register: function(name, value){
+    this.templates[name] = value;
+    return this;
+  },
+  render: function(name, locals){
+    var template = this.templates[name];
+    if (!template) throw new Error('view not found: '+name);
+    return template(locals);
+  }
+};
+
+ActivePage.ViewContext = new Constructor({
+
+  initialize: function(){
+    ActivePage.ViewContext.mixins.forEach(this.include.bind(this));
+  },
+
+  include: function(mixin){
+    $.extend(this, mixin);
+    return this;
+  },
+
+  render_view: function(name, locals){
+    return ActivePage.Views.render(name, $.extend({}, this, locals));
+  },
+
+  render_layout: function(name, locals){
+    return this.render_view('layouts/'+name, locals);
+  },
+
+  render_page: function(name, locals){
+    return this.render_view('pages/'+name, locals);
+  },
+
+  render_component: function(name, locals){
+    // TODO: make this actually use the ActivePage::Component object
+    return this.render_view('components/'+name, locals);
+  }
+
+});
+
+ActivePage.ViewContext.mixins = [];
+ActivePage.ViewContext.include = function(mixin){
+  this.mixins.push(mixin);
+  return this;
+};
+
 
 //   data: {}
 // };
