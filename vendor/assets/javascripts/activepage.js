@@ -16,19 +16,10 @@ ActivePage.render = function(){
     dataType: 'json',
     async: false,
     success: function(data){
-      console.log(data);
-
-      // ActivePage.Layout()
-
       var view_context = new ActivePage.ViewContext;
-
       var html = view_context.render_layout(layout, {
         content: view_context.render_page(page, data)
       });
-
-      // var html = ActivePage.Views.render('layouts/'+layout, {
-      //   content: content = ActivePage.Views.render('pages/'+page, data)
-      // });
       $(document.body).html(html);
       console.log('page.render complete');
     }
@@ -54,7 +45,9 @@ $.extend(ActivePage.Component.prototype, {
     return '<strong>the '+this.name+' component has no view</strong>';
   },
   render: function(locals){
-    return this.view(locals);
+    var view_context = new ActivePage.ViewContext;
+    // view_context.include(helpers);
+    return view_context.render_view('components/'+this.name, locals);
   },
   redraw: function(){
     console.log('redrawing', this);
@@ -108,8 +101,7 @@ ActivePage.ViewContext = new Constructor({
   },
 
   render_component: function(name, locals){
-    // TODO: make this actually use the ActivePage::Component object
-    return this.render_view('components/'+name, locals);
+    return ActivePage.Component(name).render(locals);
   }
 
 });
