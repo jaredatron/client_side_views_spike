@@ -12,10 +12,13 @@
 //
 //= require haml
 //= require jquery
+//= require s
+//= require jquery-s
+//= require activedata
+//= require activepage
 //= require jquery_ujs
 //= require routes
 //= require views
-//= require page
 //= require_tree .
 
 console.log('application.js loaded');

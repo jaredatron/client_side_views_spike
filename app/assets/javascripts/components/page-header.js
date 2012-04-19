@@ -1,8 +1,8 @@
 ActivePage.Component('page-header', function(c){
 
-  c.helpers('routes authentication');
+  c.helpers = ['routes', 'authentication'];
 
-  ActivePage.state.on('update', 'logged_in', function(){
+  ActivePage.state.change('logged_in', function(){
     c.redraw();
   });
 

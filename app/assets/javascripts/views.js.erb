@@ -24,7 +24,6 @@ Views = {};
     var view = this.type(type)[name];
     if (!view) throw new Error(type+" not found: "+name);
     locals = extend(Object.create(this.locals), locals || {});
-    console.log('rendering', name, locals);
     locals.render = function(type, name, locals){
       return Views.render(type, name, locals);
     };
@@ -73,6 +72,7 @@ Views.include(Routes);
   // <%= value.inspect %>
   Views.register(<%= view_type.to_json %>, <%= view_name.to_json %>, Haml(<%= value.to_json %>));
 <% end %>
+
 
 
 
