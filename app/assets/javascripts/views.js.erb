@@ -2,14 +2,19 @@
 <% Dir[views_root+'**/*'].map(&method(:Pathname)).each do |view| %>
   <%
     next unless view.file?
-    view_name, extensions = view.relative_path_from(views_root).to_s.scan(/^(.+?)\.(.+)$/).first
-    value = view.read
+    view_name, extension = view.relative_path_from(views_root).to_s.scan(/^(.+?)\.(.+)$/).first
+    value = view.read.to_json
+    value = case extension
+    when 'haml'
+      "Haml(#{value})"
+    when 'mustache'
+      "Mustache.compile(#{value})"
+    when 'handlebars'
+      "Handlebars.compile(#{value})"
+    else
+      raise "unknown view template extension #{extension}"
+    end
     # TODO: pre-render views using rubyracer one time on the server
   %>
-  ActivePage.Views.register(<%= view_name.to_json %>, Haml(<%= value.to_json %>));
+  ActivePage.Views.register(<%= view_name.to_json %>, <%= value %>);
 <% end %>
-
-
-
-
-

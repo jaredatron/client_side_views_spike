@@ -2,4 +2,7 @@
   %a{href: root_path()}  Home
   %a{href: posts_path()} Posts
 .right-nav
-  hello #{"there"}
+  :if state('logged_in')
+    hello you are logged in
+  :if !state('logged_in')
+    %a{href: "#login"} Login

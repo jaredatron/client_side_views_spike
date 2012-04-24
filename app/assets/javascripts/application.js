@@ -10,9 +10,11 @@
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
 //
+//= require jquery
 //= require constructor
 //= require haml
-//= require jquery
+//= require jquery-mustache
+//= require handlebars
 //= require s
 //= require jquery-s
 //= require activedata

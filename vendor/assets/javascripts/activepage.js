@@ -64,7 +64,10 @@ ActivePage.Helper = function(name, value){
   }
   if (arguments.length === 1){
     value = ActivePage.helpers[name];
-    if (!value) throw new Error('unknown helper '+name);
+    if (!value) {
+      debugger;1
+      throw new Error('unknown helper '+name);
+    }
   }
   if (arguments.length === 2){
     ActivePage.helpers[name] = value;
