@@ -16,15 +16,18 @@ $.extend(ActiveData.prototype, {
   set: function(key, value){
     var p, old_value;
     if (arguments.length === 1){
-      for (var p in key) this.set(p, key[p]);
-    }else{
+      for (p in key) this.set(p, key[p]);
+      return this;
+    }
+    if (arguments.length === 2){
       old_value = this.data[key]
       if (typeof old_value === 'object' || old_value !== value){
         this.data[key] = value;
         this.change(key);
       }
+      return this;
     }
-    return this;
+    throw new Error('argument error');
   },
 
   del: function(key){

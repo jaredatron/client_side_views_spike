@@ -8,17 +8,17 @@ var Constructor = (function() {
     return this;
   }
 
-  function ConstructorInstance(){}
   function construct(superObject){
-    ConstructorInstance.prototype = superObject;
-    return new ConstructorInstance;
+    var constructor = function(){};
+    constructor.prototype = superObject;
+    return new constructor;
   }
 
   function toString() { return 'Constructor'; };
 
   function Constructor(superConstructor, extension){
 
-    var constructor = function ConstructorInstance(){
+    var constructor = function(){
       var self = (this instanceof constructor) ? this : construct(constructor.prototype);
       self.constructor = constructor;
       return (typeof self.initialize === "function") ?

@@ -48,7 +48,6 @@ ActivePage.Component = new Constructor({
   },
 
   redraw: function(){
-    console.log('redrawing the '+this.name+' component');
     $('.'+this.name).replaceWith(this.render());
     return this;
   }

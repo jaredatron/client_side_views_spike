@@ -18,6 +18,7 @@
 //= require s
 //= require jquery-s
 //= require activedata
+//= require active_object
 //= require activepage
 //= require jquery_ujs
 //= require routes
