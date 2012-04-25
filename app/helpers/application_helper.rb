@@ -10,8 +10,9 @@ module ApplicationHelper
     @page_name ||= "#{params[:controller]}/#{params[:action]}"
   end
 
-  def page_title
-    @page_title || Rails.app.to_s
+  def page_title page_title=nil
+    @page_title = page_title unless page_title.nil?
+    @page_title || Rails.application.to_s
   end
 
 end

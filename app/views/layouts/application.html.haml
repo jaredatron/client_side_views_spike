@@ -6,5 +6,5 @@
     = stylesheet_link_tag "application", :media => "all"
   %body
     :javascript
-      ActivePage.state.set(#{page_state.to_json});
+      ActivePage.state.set(#{render_json});
       ActivePage.render(#{page_layout.to_json}, #{page_name.to_json});

@@ -1,4 +1,5 @@
 class PetitionsController < ApplicationController
+
   # GET /petitions
   # GET /petitions.json
   def index
@@ -6,7 +7,7 @@ class PetitionsController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.json { render json: @petitions }
+      format.json #{ render json: @petitions }
     end
   end
 

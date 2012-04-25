@@ -1,4 +1,6 @@
 ClientSideViewsExample::Application.routes.draw do
+  resources :petition_comments
+
   resource :session
   resources :users
   resources :petitions do
