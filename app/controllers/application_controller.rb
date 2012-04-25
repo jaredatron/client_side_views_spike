@@ -20,11 +20,15 @@ class ApplicationController < ActionController::Base
   end
   helper_method :page_data
 
+  def render_page_data
+    render json: page_data, :layout => true
+  end
+
   def render_json
     formats, view_context.formats = view_context.formats, [:json]
     render_to_string
   rescue ActionView::MissingTemplate
-    return '{}'
+    page_data.to_json
   ensure
     view_context.formats = formats
   end

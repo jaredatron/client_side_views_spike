@@ -26,21 +26,22 @@ ActivePage.Component = new Constructor({
     if (!component){
       component = ActivePage.components[name] = this;
       component.name = name;
-      component._helpers = [];
+      component.helpers = [];
+      component.selector = S('.'+name);
     }
     if (block) block.call(component, component);
     return component;
   },
 
-  helpers: function(){
-    if (arguments.length > 0) [].push.apply(this._helpers, arguments);
-    return this._helpers;
+  helper: function(helper){
+    [].push.apply(this.helpers, arguments);
+    return this;
   },
 
   render: function(locals){
     var view_context, html;
     view_context = new ActivePage.ViewContext;
-    this.helpers().forEach(function(helper){
+    this.helpers.forEach(function(helper){
       view_context.include(ActivePage.Helper(helper));
     });
     html = view_context.render_view('components/'+this.name, locals);

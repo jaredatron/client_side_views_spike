@@ -2,7 +2,11 @@
   %a{href: root_path()}  Home
   %a{href: posts_path()} Posts
 .right-nav
-  :if state('logged_in')
-    hello you are logged in
-  :if !state('logged_in')
-    %a{href: "#login"} Login
+  :if loggedIn()
+    hello #{currentUser().name}
+    %a.logout{href: "/logout", data-remote: true, data-method: 'post', data-type:'json'}
+      Logout
+  :if !loggedIn()
+    %a.login{href: "#"} Login
+
+= render_component('login-form')

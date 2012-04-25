@@ -1,2 +1,7 @@
-class user_session < Authlogic::Session::Base
+class UserSession < Authlogic::Session::Base
+
+  def destroyed?
+    @record == nil
+  end
+
 end

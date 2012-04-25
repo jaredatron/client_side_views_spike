@@ -1,5 +1,12 @@
 ActivePage.Helper('authentication', {
+  currentUser: function(){
+    return this.state('current_user');
+  },
   loggedIn: function(){
-    return !!this.state('logged_in');
+    var currentUser = this.currentUser();
+    return(
+      currentUser !== null &&
+      typeof this.currentUser() === 'object'
+    );
   },
 });

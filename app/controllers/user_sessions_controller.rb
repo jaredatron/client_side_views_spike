@@ -7,10 +7,8 @@ class UserSessionsController < ApplicationController
 
     respond_to do |format|
       if @user_session.save
-        format.html { redirect_to @user_session, notice: 'User session was successfully created.' }
-        format.json { render json: @user_session, status: :created, location: @user_session }
+        format.json { render_page_data }
       else
-        format.html { render action: "new" }
         format.json { render json: @user_session.errors, status: :unprocessable_entity }
       end
     end
@@ -23,8 +21,7 @@ class UserSessionsController < ApplicationController
     @user_session.destroy
 
     respond_to do |format|
-      format.html { redirect_to root_url }
-      format.json { head :no_content }
+      format.json { render_page_data }
     end
   end
 

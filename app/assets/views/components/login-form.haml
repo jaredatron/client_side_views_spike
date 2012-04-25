@@ -1,0 +1,10 @@
+%form{action: '/login', method:'post', data-remote:true, data-type:'json'}
+  %label
+    %span.label Email
+    %input{type: 'text', name: 'user_session[email]', value: 'jared@change.org'}
+  %label
+    %span.label Password
+    %input{type: 'password', name: 'user_session[password]', value: 'password'}
+  %label.buttons
+    %input.cancel{type: 'button', value: 'Cancel'}
+    %input.submit{type: 'submit', value: 'Login'}
