@@ -1,10 +1,23 @@
-class CreatePetitions < ActiveRecord::Migration
+class CreateInitialTables < ActiveRecord::Migration
   def change
 
     create_table :users do |t|
       t.string :name
+      t.string :email
+      t.string :crypted_password
+      t.string :password_salt
+      t.string :persistence_token
       t.timestamps
     end
+
+    create_table :sessions do |t|
+      t.string :session_id, :null => false
+      t.text :data
+      t.timestamps
+    end
+
+    add_index :sessions, :session_id
+    add_index :sessions, :updated_at
 
     create_table :petitions do |t|
       t.integer :owner_id
