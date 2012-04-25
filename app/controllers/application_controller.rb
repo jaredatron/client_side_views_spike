@@ -8,10 +8,6 @@ class ApplicationController < ActionController::Base
   end
   helper_method :page_data
 
-
-  def current_user
-  end
-
   def render_json
     formats, view_context.formats = view_context.formats, [:json]
     render_to_string
