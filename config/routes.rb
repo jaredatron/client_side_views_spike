@@ -1,8 +1,6 @@
 ClientSideViewsExample::Application.routes.draw do
-  resources :petition_comments
-
-  resource :session
   resources :users
+  resource :user_session, :only => [:create,:destroy]
   resources :petitions do
     resources :comments
     resources :updates

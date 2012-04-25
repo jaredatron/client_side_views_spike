@@ -1,0 +1,13 @@
+%form.signup-form{action: '/users', method: 'post'}
+  %label
+    %span Name
+    %input{type: 'text', name: 'user[name]'}
+  %label
+    %span Email
+    %input{type: 'text', name: 'user[email]'}
+  %label
+    %span Password
+    %input{type: 'text', name: 'user[password]'}
+  %label
+    %span Password Confirmation
+    %input{type: 'text', name: 'user[password_confirmation]'}

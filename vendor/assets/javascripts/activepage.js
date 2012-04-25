@@ -78,6 +78,8 @@ ActivePage.helpers = {};
 
 
 
+
+
 ActivePage.Views = {
   templates: {},
   register: function(name, value){
@@ -85,11 +87,27 @@ ActivePage.Views = {
     return this;
   },
   render: function(name, locals){
-    var template = this.templates[name];
-    if (!template) throw new Error('view not found: '+name);
+    var template = this.templates[name] || function(){
+      var error = new Error('ActivePage.TemplateMissing: '+name);
+      return "\n<pre class='error'>" + Haml.html_escape(error.stack) + "</pre>\n";
+
+    }
     return template(locals);
   }
 };
+
+// ActivePage.TemplateMissing = function(template){
+//   var tmp = Error.prototype.constructor.apply(this, arguments);
+
+//   for (var p in tmp) {
+//     if (tmp.hasOwnProperty(p)) { this[p] = tmp[p]; }
+//   }
+
+//   this.template = template;
+//   this.message = tmp.message;
+// }
+// ActivePage.TemplateMissing.prototype = new Error;
+// ActivePage.TemplateMissing.prototype.name = 'ActivePage.TemplateMissing';
 
 ActivePage.ViewContext = new Constructor({
 

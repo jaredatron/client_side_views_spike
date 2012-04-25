@@ -1,0 +1,15 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>New:</b>
+  <%= @session.new %>
+</p>
+
+<p>
+  <b>Destroy:</b>
+  <%= @session.destroy %>
+</p>
+
+
+<%= link_to 'Edit', edit_session_path(@session) %> |
+<%= link_to 'Back', sessions_path %>
