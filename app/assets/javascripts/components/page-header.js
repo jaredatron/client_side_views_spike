@@ -2,7 +2,7 @@ ActivePage.Component('page-header', function(c){
 
   c.helper('authentication');
 
-  ActivePage.state.change('current_user', function(){
+  ActivePage.data.change('current_user', function(){
     c.redraw();
   });
 
@@ -20,13 +20,13 @@ ActivePage.Component('page-header', function(c){
       .end
 
       .bind('submit-succes', function(form, event){
-        ActivePage.state.set('logged_in', true);
+        ActivePage.data.set('logged_in', true);
       })
     .end
 
     ('a.logout')
       .bind('ajax:success', function(form, event, data, status, xhr) {
-        ActivePage.state.set(data);
+        ActivePage.data.set(data);
       })
       .bind('ajax:error', function(form, event, status, error) {
         alert('logout error', status.responseText);

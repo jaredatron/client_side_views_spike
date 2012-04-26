@@ -4,7 +4,7 @@ ActivePage.Component('posts', function(c){
 
   };
 
-  ActivePage.state.change('posts', function(){
+  ActivePage.data.change('posts', function(){
     c.redraw();
   });
 

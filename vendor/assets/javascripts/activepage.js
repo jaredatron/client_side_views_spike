@@ -1,6 +1,6 @@
 ActivePage = {};
 
-ActivePage.state = new ActiveData();
+ActivePage.data = new ActiveData();
 
 ActivePage.render = function(layout, page){
   var
@@ -13,7 +13,7 @@ ActivePage.render = function(layout, page){
 ActivePage.reload = function(){
   var url = location.pathname.replace(/(\.html)?$/,'.json') + location.search;
   $.getJSON(url, function(page_state){
-    ActivePage.state.set(page_state);
+    ActivePage.data.set(page_state);
   });
 }
 
@@ -147,6 +147,6 @@ ActivePage.ViewContext.include = function(mixin){
 
 ActivePage.ViewContext.include({
   state: function(key){
-    return ActivePage.state.get(key);
+    return ActivePage.data.get(key);
   }
 });
