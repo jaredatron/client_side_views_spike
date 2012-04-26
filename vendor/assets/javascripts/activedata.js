@@ -63,17 +63,21 @@ $.extend(ActiveData.prototype, {
         if (object.hasOwnProperty(p)){
           value = object[p];
 
-          // format the key based on valid JS
-          key = p.match(/^[a-z_]+[a-z0-9_]*$/i) ?
-            (namespace ? '.' : '')+p :
-            p.match(/^[0-9]+$/) ? '['+p+']' : '["'+p+'"]';
-          if (namespace) key = namespace+key;
+          // // format the key based on valid JS
+          // key = p.match(/^[a-z_]+[a-z0-9_]*$/i) ?
+          //   (namespace ? '.' : '')+p :
+          //   p.match(/^[0-9]+$/) ? '['+p+']' : '["'+p+'"]';
+
+          // key = '['+p+']';
+          // if (namespace) key = namespace+key;
+
+          key = namespace ? namespace+'.'+p  : p;
 
           if (typeof value === 'string' || typeof value === 'number'){
             if (!(key in values) || (key in values && values[key] !== value)){
-              changes.push(key)
+              changes.push(key);
             }
-            values[key] = value
+            values[key] = value;
           }else{
             updateValues(value, key);
           }
@@ -86,7 +90,9 @@ $.extend(ActiveData.prototype, {
     var key, properties, code, last_property, last_object;
 
     for (key in values){
-      properties    = ('data.'+key).split(/\]?\.|\[/);
+      // properties    = ('data.'+key).split(/\]?\.|\[/);
+      // properties    = ('data.'+key).split(/\.|\["?|"?\]\["?|"?\]\./);
+      properties    = ('data.'+key).split(/\./);
       last_property = properties.pop();
       code          = 'this["'+properties.join('"]["')+'"]';
       try{ last_object = eval(code); }catch(e){}
@@ -95,9 +101,8 @@ $.extend(ActiveData.prototype, {
       }
     }
 
-    console.log('changes', changes);
-
-    changes.forEach(function() {
+    changes.forEach(function(change) {
+      console.log('CHANGED: '+change);
 
     });
 
@@ -143,11 +148,19 @@ ad.changed();
 
 ad.data.an={
   example:{
-    "of something":['very',{
-      complicated: {
-        'and super': 'complex'
-      }
-    }]
+    "of something":[
+      {
+        "very very":{
+          "and crazy":{
+            hard:{
+              forno:{
+                reason: [1,2,3]
+              }
+            },
+          },
+        },
+      },
+    ],
   }
 };
 
@@ -155,6 +168,21 @@ ad.changed();
 
 console.dir(ad.data);
 console.dir(ad.values);
+
+
+function propertyToJavaScript(p) {
+  p = String(p);
+  return p.match(/^[a-z_]+[a-z0-9_]*$/i) ? '.'+p :
+    p.match(/^[0-9]+$/) ? '['+p+']' : '["'+p+'"]';
+};
+
+function keyToTokens(key) {
+  return key.split(/\.|\["?|"?\]\["?|"?\]\./)
+};
+
+key = 'an.example.of["hot dog"]["fry pan"]["but not"].almost[1][2][3].food["sum num"][42]["pad thai"][00].enderson'
+
+keyToTokens('an.example["of something"][0]["very very"]["and crazy"].hard.forno.reason[2]')
 
 
 // ActiveData.Namespace = function(prefix, parent){
