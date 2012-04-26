@@ -51,6 +51,28 @@ $.extend(ActiveData.prototype, {
     return this;
   },
 
+  get: function(key) {
+    var property = this.keyToProperty(key)
+    if (property) return property.object[property.name];
+  },
+
+  set: function(key, value) {
+    var property = this.keyToProperty(key)
+    if (property) property.object[property.name] = value;
+    return this;
+  },
+
+  keyToProperty: function(key, dontThrow) {
+    var
+      properties = ('data.'+key).split(/\./),
+      property   = properties.pop(),
+      code       = 'this["'+properties.join('"]["')+'"]',
+      object;
+    try{ object = eval(code); }catch(e){};
+    if (object && property in object) return {object:object, name:property};
+    if (!dontThrow) throw new Error('invalid key: '+key);
+  },
+
   //
   changed: function() {
     var
@@ -80,14 +102,10 @@ $.extend(ActiveData.prototype, {
     updateValues(this.data);
 
     // remove nonexistant keys from the values set
-    var key, properties, code, last_property, last_object;
-    for (key in values){
-      properties    = ('data.'+key).split(/\./);
-      last_property = properties.pop();
-      code          = 'this["'+properties.join('"]["')+'"]';
-      try{ last_object = eval(code); }catch(e){}
-      if (last_object && last_property in last_object);else{
-        changes.push([key, undefined]); delete values[key]
+    for (var key in values){
+      if (!this.keyToProperty(key, true)){
+        changes.push([key, undefined]);
+        delete values[key];
       }
     }
 
