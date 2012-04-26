@@ -3,7 +3,7 @@
   %a{href: posts_path()} Posts
 .right-nav
   :if loggedIn()
-    hello #{currentUser().name}
+    hello #{current_user.name}
     %a.logout{href: "/logout", data-remote: true, data-method: 'post', data-type:'json'}
       Logout
   :if !loggedIn()

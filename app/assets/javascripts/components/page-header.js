@@ -9,27 +9,21 @@ ActivePage.Component('page-header', function(c){
 
   c.watch('current_user.name', dataChange);
 
+  // it would be awesome if we could subscribe to set of
+  // data patterns and have our callback called once when
+  // any matching data changes
+
+
   c.selector
     ('a.login')
       .click(function(link, event){
         link.root().find('.login-form').show().find('input:first').focus();
       })
     .end
-    ('.login-form')
-      ('input.cancel')
-        .click(function(button, event) {
-          button.closest('.login-form').hide()
-        })
-      .end
-
-      .bind('submit-succes', function(form, event){
-        ActivePage.data.set('logged_in', true);
-      })
-    .end
 
     ('a.logout')
       .bind('ajax:success', function(form, event, data, status, xhr) {
-        ActivePage.data.set(data);
+        ActivePage.data.extend(data).changed();
       })
       .bind('ajax:error', function(form, event, status, error) {
         alert('logout error', status.responseText);

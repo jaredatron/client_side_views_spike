@@ -17,6 +17,7 @@ ActivePage.reload = function(){
   });
 }
 
+ActivePage.components = {};
 ActivePage.Component = new Constructor({
 
   initialize: function(name, block){
@@ -48,6 +49,7 @@ ActivePage.Component = new Constructor({
     return '<div class="'+this.name+'">'+html+'</div>';
   },
 
+
   redraw: function(){
     $('.'+this.name).replaceWith(this.render());
     return this;
@@ -60,7 +62,7 @@ ActivePage.Component = new Constructor({
 
 });
 
-ActivePage.components = {};
+
 
 ActivePage.Helper = function(name, value){
   // TODO make this extend instead of overwrite
@@ -117,6 +119,7 @@ ActivePage.ViewContext = new Constructor({
 
   initialize: function(){
     ActivePage.ViewContext.mixins.forEach(this.include.bind(this));
+    this.include(ActivePage.data.data);
   },
 
   include: function(mixin){
@@ -148,8 +151,5 @@ ActivePage.ViewContext.include = function(mixin){
   return this;
 };
 
-ActivePage.ViewContext.include({
-  state: function(key){
-    return ActivePage.data.get(key);
-  }
-});
+// ActivePage.ViewContext.include({
+// });
