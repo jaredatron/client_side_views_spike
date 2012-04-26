@@ -31,7 +31,8 @@ ActiveRecord::Schema.define(:version => 20120425200035) do
 
   create_table "petitions", :force => true do |t|
     t.integer  "owner_id"
-    t.string   "title"
+    t.string   "target"
+    t.string   "ask"
     t.text     "description"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false

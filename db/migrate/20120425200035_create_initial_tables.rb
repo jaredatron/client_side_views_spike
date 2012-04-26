@@ -21,7 +21,8 @@ class CreateInitialTables < ActiveRecord::Migration
 
     create_table :petitions do |t|
       t.integer :owner_id
-      t.string :title
+      t.string :target
+      t.string :ask
       t.text :description
       t.timestamps
     end
