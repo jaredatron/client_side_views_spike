@@ -54,32 +54,24 @@ $.extend(ActiveData.prototype, {
   //
   changed: function() {
     var
-      values  = this.values
-      changes = [];
+      values   = this.values,
+      watchers = this.watchers,
+      changes  = [];
 
     function updateValues(object, namespace) {
       var p, key, value;
       for(var p in object){
         if (object.hasOwnProperty(p)){
           value = object[p];
-
-          // // format the key based on valid JS
-          // key = p.match(/^[a-z_]+[a-z0-9_]*$/i) ?
-          //   (namespace ? '.' : '')+p :
-          //   p.match(/^[0-9]+$/) ? '['+p+']' : '["'+p+'"]';
-
-          // key = '['+p+']';
-          // if (namespace) key = namespace+key;
-
           key = namespace ? namespace+'.'+p  : p;
 
-          if (typeof value === 'string' || typeof value === 'number'){
+          if ($.isPlainObject(value) || $.isArray(value)){
+            updateValues(value, key);
+          }else{
             if (!(key in values) || (key in values && values[key] !== value)){
-              changes.push(key);
+              changes.push([key, value]);
             }
             values[key] = value;
-          }else{
-            updateValues(value, key);
           }
         }
       }
@@ -87,23 +79,27 @@ $.extend(ActiveData.prototype, {
 
     updateValues(this.data);
 
+    // remove nonexistant keys from the values set
     var key, properties, code, last_property, last_object;
-
     for (key in values){
-      // properties    = ('data.'+key).split(/\]?\.|\[/);
-      // properties    = ('data.'+key).split(/\.|\["?|"?\]\["?|"?\]\./);
       properties    = ('data.'+key).split(/\./);
       last_property = properties.pop();
       code          = 'this["'+properties.join('"]["')+'"]';
       try{ last_object = eval(code); }catch(e){}
       if (last_object && last_property in last_object);else{
-        changes.push(key); delete values[key]
+        changes.push([key, undefined]); delete values[key]
       }
     }
 
+    // fire change events for the values that changed
     changes.forEach(function(change) {
-      console.log('CHANGED: '+change);
-
+      var key = change[0], value = change[1];
+      Object.keys(watchers).forEach(function(pattern){
+        if (!key.match(RegExp(pattern))) return;
+        watchers[pattern].forEach(function(callback) {
+          callback.call(this, key, value);
+        })
+      });
     });
 
     return this;
@@ -111,11 +107,13 @@ $.extend(ActiveData.prototype, {
 
   watch: function(pattern, callback) {
     pattern = pattern
+      .replace(/\*\*/g, "__STARSTAR__")
       .replace(/\*/g, "__STAR__")
       .replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
-      .replace(/__STAR__/g, "[^\]]+")
+      .replace(/__STARSTAR__/g, ".+")
+      .replace(/__STAR__/g, "[^\.]+")
     ;
-    pattern = RegExp(pattern);
+    pattern = '^'+pattern+'$';
     this.watchers[pattern] || (this.watchers[pattern] = []).push(callback);
     return this;
   }
@@ -125,8 +123,21 @@ $.extend(ActiveData.prototype, {
 ad = new ActiveData;
 
 ad.watch('*', function(){
-  console.log('CHANGES', arguments);
+  console.log('BASE PROPERTY CHANGE', arguments);
 });
+
+ad.watch('**', function(){
+  console.log('ANY PROPERTY CHANGED', arguments);
+});
+
+ad.watch('current_user.*', function(){
+  console.log('current_user BASE PROPERTY CHANGED', arguments);
+});
+
+ad.watch('current_user.**', function(){
+  console.log('current_user ANY CHILD PROPERTY CHANGED', arguments);
+});
+
 
 ad.data.a = 1;
 ad.data.b = 2;
@@ -142,9 +153,9 @@ ad.data.current_user = {
   ],
 };
 
-ad.changed();
+// ad.changed();
 
-ad.changed();
+// ad.changed();
 
 ad.data.an={
   example:{
@@ -164,25 +175,16 @@ ad.data.an={
   }
 };
 
-ad.changed();
+// ad.changed();
 
-console.dir(ad.data);
-console.dir(ad.values);
+// console.dir(ad.data);
+// console.dir(ad.values);
 
+console.dir(ad);
 
-function propertyToJavaScript(p) {
-  p = String(p);
-  return p.match(/^[a-z_]+[a-z0-9_]*$/i) ? '.'+p :
-    p.match(/^[0-9]+$/) ? '['+p+']' : '["'+p+'"]';
-};
-
-function keyToTokens(key) {
-  return key.split(/\.|\["?|"?\]\["?|"?\]\./)
-};
-
-key = 'an.example.of["hot dog"]["fry pan"]["but not"].almost[1][2][3].food["sum num"][42]["pad thai"][00].enderson'
-
-keyToTokens('an.example["of something"][0]["very very"]["and crazy"].hard.forno.reason[2]')
+ad.watch('current_user.name', function(key, value){
+  console.log('WOOT', arguments);
+});
 
 
 // ActiveData.Namespace = function(prefix, parent){
