@@ -51,6 +51,11 @@ ActivePage.Component = new Constructor({
   redraw: function(){
     $('.'+this.name).replaceWith(this.render());
     return this;
+  },
+
+  watch: function(key, callback){
+    ActivePage.data.watch(key, callback);
+    return this;
   }
 
 });
@@ -79,8 +84,6 @@ ActivePage.helpers = {};
 
 
 
-
-
 ActivePage.Views = {
   templates: {},
   register: function(name, value){
@@ -91,8 +94,8 @@ ActivePage.Views = {
     var template = this.templates[name] || function(){
       var error = new Error('ActivePage.TemplateMissing: '+name);
       return "\n<pre class='error'>" + Haml.html_escape(error.stack) + "</pre>\n";
-
     }
+    console.log('rendering '+name, locals);
     return template(locals);
   }
 };

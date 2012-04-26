@@ -2,9 +2,12 @@ ActivePage.Component('page-header', function(c){
 
   c.helper('authentication');
 
-  ActivePage.data.change('current_user', function(){
+  function dataChange(key, value){
+    console.log('redrawing because data changed', arguments);
     c.redraw();
-  });
+  }
+
+  c.watch('current_user.name', dataChange);
 
   c.selector
     ('a.login')

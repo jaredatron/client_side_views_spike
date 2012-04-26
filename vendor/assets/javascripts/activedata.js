@@ -1,46 +1,18 @@
 
-
-// data = ActiveObject();
-
-// $.extend(data,{
-//   current_user:{
-//     name: 'Jared'
-//   },
-//   petitions: [
-//     {id:1, title: 'save shit'},
-//     {id:2, title: 'dont do that'},
-//   ]
-// });
-
-// data.changed();
-// // here we mutate all the data into a flat set so
-// // we can detect changes
-
-// // you can access your data how you'd expect
-// data.current_user.name //=> 'Jared'
-// data.petitions[0].id   //=> 1
-
-// // you can subscribe to changes via the flat
-// data.watch('current_user.name', function(){ … })
-
-// data.current_user.name = 'Steve'
-// data.changed();
-
-
-// • store the data in normal js object
-// • when a save/change event is fired we mutate the entire data
-// into a flat set and check for changes
-// • you can subscribe to changes via the flat key reference
-
-
 function ActiveData(data){
   if (this instanceof ActiveData); else return new ActiveData(data);
-  this.data = data || {};
-  this.values = {};
   this.watchers = {};
+  this.resetTo(data);
 }
 
 $.extend(ActiveData.prototype, {
+
+  resetTo: function(data) {
+    this.data     = data || {};
+    this.values   = {};
+    this.changes  = [];
+    this.updateValues().ignoreChanges();
+  },
 
   keys: function(){
     return Object.keys(this.data);
@@ -73,14 +45,12 @@ $.extend(ActiveData.prototype, {
     if (!dontThrow) throw new Error('invalid key: '+key);
   },
 
-  //
-  changed: function() {
+  updateValues: function() {
     var
       values   = this.values,
-      watchers = this.watchers,
-      changes  = [];
+      changes  = this.changes;
 
-    function updateValues(object, namespace) {
+    function update(object, namespace) {
       var p, key, value;
       for(var p in object){
         if (object.hasOwnProperty(p)){
@@ -88,7 +58,7 @@ $.extend(ActiveData.prototype, {
           key = namespace ? namespace+'.'+p  : p;
 
           if ($.isPlainObject(value) || $.isArray(value)){
-            updateValues(value, key);
+            update(value, key);
           }else{
             if (!(key in values) || (key in values && values[key] !== value)){
               changes.push([key, value]);
@@ -99,7 +69,7 @@ $.extend(ActiveData.prototype, {
       }
     }
 
-    updateValues(this.data);
+    update(this.data);
 
     // remove nonexistant keys from the values set
     for (var key in values){
@@ -109,16 +79,36 @@ $.extend(ActiveData.prototype, {
       }
     }
 
+    return this;
+  },
+
+  ignoreChanges: function() {
+    this.changes.length = 0;
+    return this;
+  },
+
+  //
+  changed: function() {
+    var
+      watchers = this.watchers,
+      changes  = this.changes;
+
+    this.updateValues();
+
     // fire change events for the values that changed
-    changes.forEach(function(change) {
-      var key = change[0], value = change[1];
+    while (changes.length){
+      var
+        change = changes.shift(),
+        key    = change[0],
+        value  = change[1];
+
       Object.keys(watchers).forEach(function(pattern){
         if (!key.match(RegExp(pattern))) return;
         watchers[pattern].forEach(function(callback) {
           callback.call(this, key, value);
         })
       });
-    });
+    }
 
     return this;
   },
@@ -138,112 +128,69 @@ $.extend(ActiveData.prototype, {
 
 });
 
-ad = new ActiveData;
+// ad = new ActiveData;
 
-ad.watch('*', function(){
-  console.log('BASE PROPERTY CHANGE', arguments);
-});
+// ad.watch('*', function(){
+//   console.log('BASE PROPERTY CHANGE', arguments);
+// });
 
-ad.watch('**', function(){
-  console.log('ANY PROPERTY CHANGED', arguments);
-});
+// ad.watch('**', function(){
+//   console.log('ANY PROPERTY CHANGED', arguments);
+// });
 
-ad.watch('current_user.*', function(){
-  console.log('current_user BASE PROPERTY CHANGED', arguments);
-});
+// ad.watch('current_user.*', function(){
+//   console.log('current_user BASE PROPERTY CHANGED', arguments);
+// });
 
-ad.watch('current_user.**', function(){
-  console.log('current_user ANY CHILD PROPERTY CHANGED', arguments);
-});
-
-
-ad.data.a = 1;
-ad.data.b = 2;
-ad.data.c = 'C';
-ad.data.current_user = {
-  name: 'Jared',
-  age: 29,
-  "a crazy key": 'zomg',
-  "99": 'bitchez',
-  friends: [
-    {name: 'Chris', age: 28},
-    {name: 'Megan', age: 23},
-  ],
-};
-
-// ad.changed();
-
-// ad.changed();
-
-ad.data.an={
-  example:{
-    "of something":[
-      {
-        "very very":{
-          "and crazy":{
-            hard:{
-              forno:{
-                reason: [1,2,3]
-              }
-            },
-          },
-        },
-      },
-    ],
-  }
-};
-
-// ad.changed();
-
-// console.dir(ad.data);
-// console.dir(ad.values);
-
-console.dir(ad);
-
-ad.watch('current_user.name', function(key, value){
-  console.log('WOOT', arguments);
-});
+// ad.watch('current_user.**', function(){
+//   console.log('current_user ANY CHILD PROPERTY CHANGED', arguments);
+// });
 
 
-// ActiveData.Namespace = function(prefix, parent){
-//   if (this instanceof ActiveData.Namespace); else return new ActiveData.Namespace(prefix, parent);
-//   this.prefix = prefix;
-//   this.parent = parent;
+// ad.data.a = 1;
+// ad.data.b = 2;
+// ad.data.c = 'C';
+// ad.data.current_user = {
+//   name: 'Jared',
+//   age: 29,
+//   "a crazy key": 'zomg',
+//   "99": 'bitchez',
+//   friends: [
+//     {name: 'Chris', age: 28},
+//     {name: 'Megan', age: 23},
+//   ],
 // };
 
-// $.extend(ActiveData.Namespace.prototype, {
+// // ad.changed();
 
-//   keys: function(){
-//     var regexp = RegExp('^'+this.prefix+':(.+)$');
-//     return this.parent.keys().map(function(key){
-//       return key.match(regexp) ? RegExp.$1 : false;
-//     }).filter(function(key){ return key; });
-//   },
+// // ad.changed();
 
-//   get: function(key){
-//     return this.parent.get(this.prefix+':'+key);
-//   },
-
-//   set: function(key, value){
-//     this.parent.set(this.prefix+':'+key, value);
-//     return this;
-//   },
-
-//   del: function(key){
-//     this.parent.del(this.prefix+':'+key);
-//     return this;
-//   },
-
-//   change: function(key, callback){
-//     var namespace = this;
-//     this.parent.change(this.prefix+':'+key, function(value){
-//       callback.call(namespace, value, key);
-//     });
-//     return this;
-//   },
-
-//   namespace: function(prefix){
-//     return new ActiveData.Namespace(prefix, this);
+// ad.data.an={
+//   example:{
+//     "of something":[
+//       {
+//         "very very":{
+//           "and crazy":{
+//             hard:{
+//               forno:{
+//                 reason: [1,2,3]
+//               }
+//             },
+//           },
+//         },
+//       },
+//     ],
 //   }
+// };
 
+// // ad.changed();
+
+// // console.dir(ad.data);
+// // console.dir(ad.values);
+
+// console.dir(ad);
+
+// ad.watch('current_user.name', function(key, value){
+//   console.log('WOOT', arguments);
 // });
+
