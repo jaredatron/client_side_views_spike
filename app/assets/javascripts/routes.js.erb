@@ -1,9 +1,15 @@
 // this is a temporary manual API so we don't have to write rails routes in JS right now
 Routes = {};
 Routes.root_path = function(){ return '/'; };
+Routes.petitions_path = function(){ return '/petitions'; };
+Routes.petition_path = function(param){
+  if ('to_param' in param) param = param.to_param;
+  return this.petitions_path()+'/'+encodeURI(param);
+};
+
+
 Routes.root_url = function(){ return location.origin+this.root_path(); };
-Routes.posts_path = function(){ return '/posts'; };
-Routes.posts_url = function(){ return location.origin+this.posts_path(); };
+Routes.petitions_url = function(){ return location.origin+this.posts_path(); };
 
 
 ActivePage.ViewContext.include(Routes);

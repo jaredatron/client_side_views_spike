@@ -4,11 +4,14 @@
 // import everything
 <% root = Pathname(File.expand_path('../',__FILE__)) %>
 <% Dir[root.join('{components,layouts,pages}/**/*')].each do |file| %>
-@import "<%= Pathname.new(file).relative_path_from(root) %>"
+  <% file = Pathname.new(file) %>
+  <% if file.file? %>
+@import "<%= file.relative_path_from(root) %>"
+  <% end %>
 <% end %>
 
 // TODO import components nested under their component classname
 // to inforce/discourage style leak
 
 
-<% # UPDATE(1335414240) %>
+<% # UPDATE(1335513317) %>

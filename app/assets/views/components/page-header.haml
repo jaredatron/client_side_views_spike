@@ -1,6 +1,6 @@
 .left-nav
   %a{href: root_path()}  Home
-  %a{href: posts_path()} Posts
+  %a{href: petitions_path()} Petitions
 .right-nav
   :if loggedIn()
     hello #{current_user.name}

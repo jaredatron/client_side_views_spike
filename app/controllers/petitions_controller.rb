@@ -14,7 +14,7 @@ class PetitionsController < ApplicationController
   # GET /petitions/1
   # GET /petitions/1.json
   def show
-    @petition = Petition.find(params[:id])
+    @petition = Petition.find_by_stub(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -35,7 +35,7 @@ class PetitionsController < ApplicationController
 
   # GET /petitions/1/edit
   def edit
-    @petition = Petition.find(params[:id])
+    @petition = Petition.find_by_stub(params[:id])
   end
 
   # POST /petitions
@@ -57,7 +57,7 @@ class PetitionsController < ApplicationController
   # PUT /petitions/1
   # PUT /petitions/1.json
   def update
-    @petition = Petition.find(params[:id])
+    @petition = Petition.find_by_stub(params[:id])
 
     respond_to do |format|
       if @petition.update_attributes(params[:petition])
@@ -73,7 +73,7 @@ class PetitionsController < ApplicationController
   # DELETE /petitions/1
   # DELETE /petitions/1.json
   def destroy
-    @petition = Petition.find(params[:id])
+    @petition = Petition.find_by_stub(params[:id])
     @petition.destroy
 
     respond_to do |format|

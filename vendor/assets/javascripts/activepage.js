@@ -34,11 +34,16 @@ ActivePage.Component = new Constructor({
     return component;
   },
 
+  classname: function(){
+    return this.name.replace(/\//g,'-');
+  },
+
   helper: function(helper){
     [].push.apply(this.helpers, arguments);
     return this;
   },
 
+  nodeType: 'div',
   render: function(locals){
     var view_context, html;
     view_context = new ActivePage.ViewContext;
@@ -46,7 +51,8 @@ ActivePage.Component = new Constructor({
       view_context.include(ActivePage.Helper(helper));
     });
     html = view_context.render_view('components/'+this.name, locals);
-    return '<div class="'+this.name+'">'+html+'</div>';
+    console.log(this.name, this.nodeType);
+    return '<'+this.nodeType+' class="'+this.classname()+'">'+html+'</'+this.nodeType+'>';
   },
 
 

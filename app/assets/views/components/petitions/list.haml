@@ -1,3 +1,2 @@
-%ol
-  :each petition in petitions
-    = render_component('petitions/list/member')
+:each petition in petitions
+  = render_component('petitions/list/member', {petition:petition})
